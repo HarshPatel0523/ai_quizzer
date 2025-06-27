@@ -1,0 +1,67 @@
+{
+	"id": "ai-quizzer-env-2025-current",
+	"name": "AI Quizzer Development (Current)",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "secret",
+			"enabled": true
+		},
+		{
+			"key": "quiz_id",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "question_id",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "submission_id",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "all_question_ids",
+			"value": "[]",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "current_user",
+			"value": "HarshPatel0523",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "user_email",
+			"value": "harsh.patel@example.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "current_datetime",
+			"value": "2025-06-16 17:12:40",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "session_info",
+			"value": "Active session for HarshPatel0523",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment"
+}

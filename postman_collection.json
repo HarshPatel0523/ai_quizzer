@@ -1,0 +1,798 @@
+{
+	"info": {
+		"_postman_id": "ai-quizzer-collection-2025-manual",
+		"name": "AI Quizzer Microservice API (Manual Answers)",
+		"description": "Auto-extracts question IDs but requires manual answer input - full control over quiz responses",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "🔐 Authentication",
+			"item": [
+				{
+					"name": "Login (Mock Authentication)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.token).to.exist;",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"});",
+									"",
+									"pm.test(\"Response has user info\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.user.username).to.eql(\"testuser\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"testpassword\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Mock authentication endpoint that accepts any username/password combination and returns a JWT token."
+					}
+				},
+				{
+					"name": "Login with Email (Bonus)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.token).to.exist;",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"    console.log('✅ Logged in as: HarshPatel0523');",
+									"});",
+									"",
+									"pm.test(\"Response has email\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.user.email).to.exist;",
+									"    console.log('📧 Email registered for notifications');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"HarshPatel0523\",\n    \"password\": \"testpassword\",\n    \"email\": \"harsh.patel@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with email for email notifications. Uses current user: HarshPatel0523"
+					}
+				}
+			],
+			"description": "Authentication endpoints for HarshPatel0523"
+		},
+		{
+			"name": "🧠 Quiz Management",
+			"item": [
+				{
+					"name": "Generate New Quiz",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Quiz has required fields\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData._id).to.exist;",
+									"    pm.expect(jsonData.title).to.exist;",
+									"    pm.expect(jsonData.questions).to.be.an('array');",
+									"    ",
+									"    // Store quiz ID",
+									"    pm.environment.set(\"quiz_id\", jsonData._id);",
+									"    ",
+									"    // Extract ALL question IDs for manual answer creation",
+									"    const questionIds = jsonData.questions.map(q => q._id);",
+									"    pm.environment.set(\"all_question_ids\", JSON.stringify(questionIds));",
+									"    ",
+									"    // Store first question ID for hint testing",
+									"    if (jsonData.questions.length > 0) {",
+									"        pm.environment.set(\"question_id\", jsonData.questions[0]._id);",
+									"    }",
+									"    ",
+									"    console.log('📊 QUIZ GENERATED SUCCESSFULLY');",
+									"    console.log('🆔 Quiz ID:', jsonData._id);",
+									"    console.log('📝 Total Questions:', jsonData.questions.length);",
+									"    console.log('📅 Created:', '2025-06-16 14:55:01');",
+									"    console.log('👤 Created by: HarshPatel0523');",
+									"    console.log('');",
+									"    console.log('📋 QUESTION DETAILS:');",
+									"    ",
+									"    // Display all questions with their IDs and correct answers",
+									"    jsonData.questions.forEach((q, index) => {",
+									"        console.log(`Q${index + 1}. ${q.questionText}`);",
+									"        console.log(`    ID: ${q._id}`);",
+									"        console.log(`    Options: ${q.options.map(opt => opt.optionKey + ') ' + opt.optionValue).join(', ')}`);",
+									"        console.log(`    Correct Answer: ${q.correctAnswerKey}`);",
+									"        console.log('');",
+									"    });",
+									"    ",
+									"    console.log('💡 TIP: Copy the question IDs above to manually create your answer structure!');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Science Quiz - Grade 5 (2025-06-16 14:55:01)\",\n    \"subject\": \"Science\",\n    \"gradeLevel\": \"5th Grade\",\n    \"numQuestions\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/generate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"quizzes",
+								"generate"
+							]
+						},
+						"description": "Generates a new quiz and displays all question details for manual answer creation."
+					}
+				},
+				{
+					"name": "Get Quiz by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Quiz data is complete\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData._id).to.exist;",
+									"    pm.expect(jsonData.questions).to.be.an('array');",
+									"    ",
+									"    console.log('📊 QUIZ DETAILS:');",
+									"    console.log('🆔 Quiz ID:', jsonData._id);",
+									"    console.log('📖 Title:', jsonData.title);",
+									"    console.log('📚 Subject:', jsonData.subject);",
+									"    console.log('🎓 Grade Level:', jsonData.gradeLevel);",
+									"    console.log('📝 Total Questions:', jsonData.questions.length);",
+									"    console.log('⚡ AI Tool:', jsonData.createdByAiTool);",
+									"    console.log('');",
+									"    ",
+									"    console.log('📋 ALL QUESTIONS WITH IDS:');",
+									"    jsonData.questions.forEach((q, index) => {",
+									"        console.log(`\\nQ${index + 1}. ${q.questionText}`);",
+									"        console.log(`    🆔 Question ID: ${q._id}`);",
+									"        q.options.forEach(opt => {",
+									"            const marker = opt.optionKey === q.correctAnswerKey ? ' ✅' : '';",
+									"            console.log(`    ${opt.optionKey}) ${opt.optionValue}${marker}`);",
+									"        });",
+									"        if (q.hint) {",
+									"            console.log(`    💡 Hint: ${q.hint}`);",
+									"        }",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/{{quiz_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"quizzes",
+								"{{quiz_id}}"
+							]
+						},
+						"description": "Retrieves quiz details with all question IDs and correct answers for reference."
+					}
+				},
+				{
+					"name": "Submit Quiz Answers (Manual)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Display helper information for manual answer creation",
+									"const questionIdsStr = pm.environment.get('all_question_ids');",
+									"",
+									"if (questionIdsStr) {",
+									"    const questionIds = JSON.parse(questionIdsStr);",
+									"    console.log('📝 MANUAL ANSWER TEMPLATE HELPER:');",
+									"    console.log('Use the following question IDs in your request body:');",
+									"    console.log('');",
+									"    questionIds.forEach((id, index) => {",
+									"        console.log(`Q${index + 1} ID: ${id}`);",
+									"    });",
+									"    console.log('');",
+									"    console.log('📋 COPY THIS TEMPLATE TO REQUEST BODY:');",
+									"    console.log('{');",
+									"    console.log('  \"quizId\": \"' + pm.environment.get('quiz_id') + '\",');",
+									"    console.log('  \"answers\": [');",
+									"    questionIds.forEach((id, index) => {",
+									"        const comma = index < questionIds.length - 1 ? ',' : '';",
+									"        console.log(`    {\"questionId\": \"${id}\", \"selectedAnswerKey\": \"a\"}${comma}`);",
+									"    });",
+									"    console.log('  ]');",
+									"    console.log('}');",
+									"    console.log('');",
+									"    console.log('💡 Change the selectedAnswerKey values (a, b, c, d) as needed!');",
+									"} else {",
+									"    console.log('⚠️ No question IDs found. Generate a quiz first!');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Submission has score\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.submission.score).to.exist;",
+									"    pm.expect(jsonData.submission._id).to.exist;",
+									"    pm.environment.set(\"submission_id\", jsonData.submission._id);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"const submission = jsonData.submission;",
+									"",
+									"console.log('🎯 QUIZ SUBMISSION RESULTS:');",
+									"console.log('🆔 Submission ID:', submission._id);",
+									"console.log('📊 Final Score:', submission.score + '%');",
+									"console.log('✅ Correct Answers:', submission.correctAnswersCount + '/' + submission.totalQuestions);",
+									"console.log('📅 Completed:', new Date(submission.completedDate).toLocaleString());",
+									"console.log('👤 Student:', 'HarshPatel0523');",
+									"console.log('');",
+									"",
+									"// Show detailed results",
+									"if (submission.answers) {",
+									"    console.log('📋 DETAILED ANSWER BREAKDOWN:');",
+									"    submission.answers.forEach((answer, index) => {",
+									"        const status = answer.isCorrect ? '✅ CORRECT' : '❌ WRONG';",
+									"        console.log(`Q${index + 1}: Selected '${answer.selectedAnswerKey}' | Correct: '${answer.correctAnswerKey}' | ${status}`);",
+									"    });",
+									"    console.log('');",
+									"}",
+									"",
+									"// Show AI suggestions if available",
+									"if (jsonData.improvementSuggestions && jsonData.improvementSuggestions.length > 0) {",
+									"    console.log('🤖 AI IMPROVEMENT SUGGESTIONS:');",
+									"    jsonData.improvementSuggestions.forEach((suggestion, i) => {",
+									"        console.log(`${i + 1}. ${suggestion}`);",
+									"    });",
+									"    console.log('');",
+									"} else {",
+									"    console.log('🎉 Perfect score! No suggestions needed.');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"quizId\": \"{{quiz_id}}\",\n    \"answers\": [\n        {\"questionId\": \"REPLACE_WITH_ACTUAL_ID_1\", \"selectedAnswerKey\": \"a\"},\n        {\"questionId\": \"REPLACE_WITH_ACTUAL_ID_2\", \"selectedAnswerKey\": \"b\"},\n        {\"questionId\": \"REPLACE_WITH_ACTUAL_ID_3\", \"selectedAnswerKey\": \"c\"},\n        {\"questionId\": \"REPLACE_WITH_ACTUAL_ID_4\", \"selectedAnswerKey\": \"d\"},\n        {\"questionId\": \"REPLACE_WITH_ACTUAL_ID_5\", \"selectedAnswerKey\": \"a\"}\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/submit",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"quizzes",
+								"submit"
+							]
+						},
+						"description": "Submit quiz answers manually. Replace question IDs and select your answers (a, b, c, d). Check pre-request console for the correct template."
+					}
+				},
+				{
+					"name": "Get Quiz History",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    ",
+									"    console.log('📊 QUIZ HISTORY FOR HarshPatel0523:');",
+									"    console.log('📅 Retrieved on: 2025-06-16 14:55:01');",
+									"    console.log('📈 Total Submissions Found:', jsonData.length);",
+									"    console.log('');",
+									"    ",
+									"    if (jsonData.length > 0) {",
+									"        console.log('📋 SUBMISSION DETAILS:');",
+									"        jsonData.forEach((submission, index) => {",
+									"            const date = new Date(submission.completedDate).toLocaleDateString();",
+									"            const time = new Date(submission.completedDate).toLocaleTimeString();",
+									"            const retryBadge = submission.isRetry ? ' 🔄 (RETRY)' : '';",
+									"            ",
+									"            console.log(`${index + 1}. ${submission.quizTitle}${retryBadge}`);",
+									"            console.log(`   📊 Score: ${submission.score}% (${submission.correctAnswersCount}/${submission.totalQuestions})`);",
+									"            console.log(`   📅 Date: ${date} at ${time}`);",
+									"            console.log(`   📚 Subject: ${submission.subject} | Grade: ${submission.gradeLevel}`);",
+									"            console.log('');",
+									"        });",
+									"        ",
+									"        // Calculate average score",
+									"        const avgScore = (jsonData.reduce((sum, sub) => sum + sub.score, 0) / jsonData.length).toFixed(1);",
+									"        console.log('📈 STATISTICS:');",
+									"        console.log(`   Average Score: ${avgScore}%`);",
+									"        console.log(`   Best Score: ${Math.max(...jsonData.map(s => s.score))}%`);",
+									"        console.log(`   Total Quizzes: ${jsonData.length}`);",
+									"    } else {",
+									"        console.log('📝 No quiz submissions found yet.');",
+									"        console.log('💡 Take your first quiz to see history here!');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/history?subject=Science&marks_gte=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"quizzes",
+								"history"
+							],
+							"query": [
+								{
+									"key": "subject",
+									"value": "Science",
+									"description": "Filter by subject"
+								},
+								{
+									"key": "marks_gte",
+									"value": "0",
+									"description": "Minimum score filter (0 to see all)"
+								},
+								{
+									"key": "grade",
+									"value": "5th Grade",
+									"disabled": true
+								},
+								{
+									"key": "from",
+									"value": "2025-06-01",
+									"disabled": true
+								},
+								{
+									"key": "to",
+									"value": "2025-06-30",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Retrieves quiz submission history for HarshPatel0523 with detailed statistics."
+					}
+				},
+				{
+					"name": "Retry Quiz (Manual)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const submissionId = pm.environment.get('submission_id');",
+									"const questionIdsStr = pm.environment.get('all_question_ids');",
+									"",
+									"console.log('🔄 RETRY QUIZ PREPARATION:');",
+									"console.log('👤 User: HarshPatel0523');",
+									"console.log('📅 Retry Date: 2025-06-16 14:55:01');",
+									"console.log('🆔 Original Submission ID:', submissionId || 'Not found - submit a quiz first!');",
+									"console.log('');",
+									"",
+									"if (!submissionId) {",
+									"    console.log('❌ ERROR: No submission ID found!');",
+									"    console.log('💡 Please submit a quiz first before retrying.');",
+									"    return;",
+									"}",
+									"",
+									"if (questionIdsStr) {",
+									"    const questionIds = JSON.parse(questionIdsStr);",
+									"    console.log('📋 MANUAL RETRY TEMPLATE:');",
+									"    console.log('Replace question IDs and improve your answers:');",
+									"    console.log('');",
+									"    console.log('{');",
+									"    console.log('  \"originalSubmissionId\": \"' + submissionId + '\",');",
+									"    console.log('  \"answers\": [');",
+									"    questionIds.forEach((id, index) => {",
+									"        const comma = index < questionIds.length - 1 ? ',' : '';",
+									"        console.log(`    {\"questionId\": \"${id}\", \"selectedAnswerKey\": \"a\"}${comma}`);",
+									"    });",
+									"    console.log('  ]');",
+									"    console.log('}');",
+									"    console.log('');",
+									"    console.log('💡 RETRY STRATEGY: Change wrong answers to correct ones for better score!');",
+									"} else {",
+									"    console.log('⚠️ No question IDs available. Generate a quiz first!');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Retry submission created\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.submission.isRetry).to.be.true;",
+									"    pm.expect(jsonData.submission.originalSubmissionId).to.exist;",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"const submission = jsonData.submission;",
+									"",
+									"console.log('🔄 RETRY SUBMISSION COMPLETED!');",
+									"console.log('👤 Student: HarshPatel0523');",
+									"console.log('📅 Retry Date: 2025-06-16 14:55:01');",
+									"console.log('');",
+									"console.log('📊 RETRY RESULTS:');",
+									"console.log('🆔 New Submission ID:', submission._id);",
+									"console.log('📈 New Score:', submission.score + '%');",
+									"console.log('✅ Correct Answers:', submission.correctAnswersCount + '/' + submission.totalQuestions);",
+									"console.log('🔗 Original Submission:', submission.originalSubmissionId);",
+									"console.log('📅 Completed:', new Date(submission.completedDate).toLocaleString());",
+									"console.log('');",
+									"",
+									"// Show improvement suggestions if any",
+									"if (jsonData.improvementSuggestions && jsonData.improvementSuggestions.length > 0) {",
+									"    console.log('🤖 ADDITIONAL IMPROVEMENT SUGGESTIONS:');",
+									"    jsonData.improvementSuggestions.forEach((suggestion, i) => {",
+									"        console.log(`${i + 1}. ${suggestion}`);",
+									"    });",
+									"} else {",
+									"    console.log('🎉 Great improvement! No additional suggestions needed.');",
+									"}",
+									"",
+									"console.log('');",
+									"console.log('💡 TIP: Check your quiz history to see both original and retry scores!');"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"originalSubmissionId\": \"{{submission_id}}\",\n    \"answers\": [\n        {\"questionId\": \"REPLACE_WITH_ACTUAL_ID_1\", \"selectedAnswerKey\": \"b\"},\n        {\"questionId\": \"REPLACE_WITH_ACTUAL_ID_2\", \"selectedAnswerKey\": \"c\"},\n        {\"questionId\": \"REPLACE_WITH_ACTUAL_ID_3\", \"selectedAnswerKey\": \"d\"},\n        {\"questionId\": \"REPLACE_WITH_ACTUAL_ID_4\", \"selectedAnswerKey\": \"a\"},\n        {\"questionId\": \"REPLACE_WITH_ACTUAL_ID_5\", \"selectedAnswerKey\": \"b\"}\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/retry",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"quizzes",
+								"retry"
+							]
+						},
+						"description": "Manually retry the quiz with improved answers. Replace question IDs and select better answers to improve your score."
+					}
+				},
+				{
+					"name": "Get Question Hint (Bonus)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 404\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"Hint is provided\", function () {",
+									"        var jsonData = pm.response.json();",
+									"        pm.expect(jsonData.hint).to.exist;",
+									"        ",
+									"        console.log('💡 AI-GENERATED HINT:');",
+									"        console.log('📝 Question Hint:', jsonData.hint);",
+									"        console.log('👤 Requested by: HarshPatel0523');",
+									"        console.log('📅 Requested: 2025-06-16 14:55:01');",
+									"    });",
+									"} else {",
+									"    console.log('ℹ️ No hint available for this question');",
+									"    console.log('💡 Try generating a new quiz or check the question ID');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/{{quiz_id}}/questions/{{question_id}}/hint",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"quizzes",
+								"{{quiz_id}}",
+								"questions",
+								"{{question_id}}",
+								"hint"
+							]
+						},
+						"description": "Gets an AI-generated hint for the first question in the quiz."
+					}
+				}
+			],
+			"description": "Quiz management with manual answer input and automatic question ID extraction"
+		},
+		{
+			"name": "📧 Email & Testing",
+			"item": [
+				{
+					"name": "Test Email Service",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Success message received\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include('successfully');",
+									"    ",
+									"    console.log('📧 EMAIL SERVICE TEST COMPLETED!');",
+									"    console.log('✅ Test email sent successfully');",
+									"    console.log('📬 Destination: harsh.patel@example.com');",
+									"    console.log('👤 Tested by: HarshPatel0523');",
+									"    console.log('📅 Test Date: 2025-06-16 14:55:01');",
+									"    console.log('');",
+									"    console.log('💡 Check your email inbox to confirm delivery!');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"harsh.patel@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/quizzes/test-email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"quizzes",
+								"test-email"
+							]
+						},
+						"description": "Tests the email service for HarshPatel0523's email address."
+					}
+				}
+			],
+			"description": "Email testing for HarshPatel0523"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global pre-request script for HarshPatel0523",
+					"if (!pm.environment.get('auth_token') && !pm.request.url.path.includes('login')) {",
+					"    console.warn('⚠️ No auth token found. Please run Login first.');",
+					"}",
+					"",
+					"// Log session info",
+					"console.log('👤 User Session: HarshPatel0523');",
+					"console.log('🕐 Current Time (UTC): 2025-06-16 14:55:01');"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
