@@ -1,3 +1,6 @@
+### Demo Video
+[![Watch the video](https://img.youtube.com/vi/https://youtu.be/HtK9XOsYpcQ/0.jpg)](https://www.youtube.com/watch?v=https://youtu.be/HtK9XOsYpcQ)
+
 # AI Quizzer Microservice
 
 This microservice provides REST API endpoints for an AI Quizzer application. It handles user authentication (mock), quiz generation using the Groq AI API, quiz submissions, scoring, and history tracking.
