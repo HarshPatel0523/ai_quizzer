@@ -1,5 +1,5 @@
 ### Demo Video
-[![Watch the video](https://img.youtube.com/vi/https://youtu.be/HtK9XOsYpcQ/0.jpg)](https://www.youtube.com/watch?v=https://youtu.be/HtK9XOsYpcQ)
+[![Watch the video](https://img.youtube.com/vi/HtK9XOsYpcQ/0.jpg)](https://www.youtube.com/watch?v=HtK9XOsYpcQ)
 
 # AI Quizzer Microservice
 
