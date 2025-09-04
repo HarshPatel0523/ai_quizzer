@@ -44,7 +44,7 @@ async function generateQuizWithGroq(subject, gradeLevel, numQuestions = 5) {
     try {
         console.log("Sending request to Groq API...");
         const response = await axios.post(groqApiUrl, {
-            model: "llama3-8b-8192", 
+            model: "llama-3.1-8b-instant", 
             messages: [
                 {
                     role: "system",
@@ -119,7 +119,7 @@ async function generateHintWithGroq(questionText) {
 
     try {
         const response = await axios.post(groqApiUrl, {
-            model: "llama3-8b-8192", 
+            model: "llama-3.1-8b-instant", 
             messages: [{ role: "user", content: prompt }],
             temperature: 0.5,
             max_tokens: 50
@@ -155,7 +155,7 @@ async function generateSuggestionsWithGroq(incorrectAnswers) {
 
     try {
         const response = await axios.post(groqApiUrl, {
-            model: "llama3-8b-8192", 
+            model: "llama-3.1-8b-instant", 
             messages: [{ role: "user", content: prompt }],
             temperature: 0.6,
             max_tokens: 200,
