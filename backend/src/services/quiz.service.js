@@ -95,7 +95,7 @@ async function submitQuizAnswers(studentId, quizId, answers, userEmail = null) {
         }
 
         const totalQuestions = quiz.questions.length;
-        const score = totalQuestions > 0 ? (correctAnswersCount / totalQuestions) * 100 : 0;
+        const score = totalQuestions > 0 ? correctAnswersCount : 0;
 
         const submission = new QuizSubmission({
             studentId,
@@ -267,6 +267,12 @@ async function retryQuizSubmission(studentId, originalSubmissionId, newAnswers, 
 
 async function getQuizById(quizId) {
     try {
+        // Validate ObjectId format
+        const mongoose = require('mongoose');
+        if (!mongoose.Types.ObjectId.isValid(quizId)) {
+            throw new Error('Invalid quiz ID format');
+        }
+        
         const quiz = await Quiz.findById(quizId);
         if (!quiz) {
             throw new Error('Quiz not found');
