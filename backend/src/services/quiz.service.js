@@ -95,7 +95,7 @@ async function submitQuizAnswers(studentId, quizId, answers, userEmail = null) {
         }
 
         const totalQuestions = quiz.questions.length;
-        const score = totalQuestions > 0 ? correctAnswersCount : 0;
+        const score = totalQuestions > 0 ? (correctAnswersCount / totalQuestions) * 100 : 0;
 
         const submission = new QuizSubmission({
             studentId,

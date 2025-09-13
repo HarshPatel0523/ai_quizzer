@@ -247,7 +247,7 @@ const QuizHistory = ({ onViewResult, onBackToHome }) => {
       ) : (
         <div className="space-y-3">
           {history.map((submission) => {
-            const percentage = Math.round(((submission.score || 0) / (submission.totalQuestions || 1)) * 100);
+            const percentage = Math.round(submission.score || 0);  // score is already a percentage from backend
             
             // Safety checks for submission data
             if (!submission) {
@@ -272,7 +272,7 @@ const QuizHistory = ({ onViewResult, onBackToHome }) => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-600">
                     <p><span className="font-medium">Subject:</span> {submission.subject || 'Unknown Subject'}</p>
                     <p><span className="font-medium">Grade:</span> {submission.gradeLevel || 'Unknown Grade'}</p>
-                    <p><span className="font-medium">Score:</span> {submission.score || 0}/{submission.totalQuestions || 0}</p>
+                    <p><span className="font-medium">Score:</span> {submission.correctAnswersCount || 0}/{submission.totalQuestions || 0} ({Math.round(submission.score || 0)}%)</p>
                   </div>                    <div className="mt-2 text-xs text-gray-500">
                       <p>Submitted: {submission.submittedAt ? new Date(submission.submittedAt).toLocaleString() : 'Date not available'}</p>
                       {(submission.retryCount || 0) > 0 && (

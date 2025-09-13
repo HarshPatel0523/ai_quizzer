@@ -42,7 +42,7 @@ const QuizResults = ({ result, onRetryQuiz, onBackToHome }) => {
 
   const { quizTitle, subject, gradeLevel, score, totalQuestions, correctAnswersCount, completedDate, quizId } = submission;
   
-  const percentage = Math.round(((submission.score || 0) / (submission.totalQuestions || 1)) * 100);
+  const percentage = Math.round(score || 0);  // score is already a percentage from backend
   
   const getScoreColor = () => {
     if (percentage >= 80) return 'text-green-600';
@@ -91,7 +91,7 @@ const QuizResults = ({ result, onRetryQuiz, onBackToHome }) => {
       <div className={`${getScoreBackground()} p-6 rounded-lg mb-6`}>
         <div className="text-center">
           <div className={`text-4xl font-bold ${getScoreColor()} mb-2`}>
-            {score} / {totalQuestions}
+            {correctAnswersCount} / {totalQuestions}
           </div>
           <div className={`text-2xl ${getScoreColor()} mb-2`}>
             {percentage}%
